@@ -1,0 +1,28 @@
+{
+  "name": "goldyrl",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MDixey17/goldyrl.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MDixey17/goldyrl/issues"
+  },
+  "homepage": "https://github.com/MDixey17/goldyrl#readme",
+  "dependencies": {
+    "discord.js": "^14.6.0",
+    "dotenv": "^16.0.3",
+    "graphql": "^16.6.0",
+    "sequelize": "^6.25.2",
+    "sqlite3": "^5.1.2"
+  }
+}
