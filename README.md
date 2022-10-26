@@ -33,5 +33,8 @@ This file will contain the appropriate variables that must be kept hidden to pre
  - UMN_GUILD_ID
  - CLIENT_ID
 
-3. Run `npm start`
-PENDING CONFIRMATION!
+3. Run `node index.js` to activate the bot!
+
+A few notes to keep in mind during development:
+1. If you are loading the commands for the first time OR modify any of the existing slash commands, you must run `node deploy-commands.js`.
+2. If you are running the bot, it will NOT automatically apply changes you make after each save. You will need to rerun `node index.js` to apply changes.
