@@ -1,7 +1,7 @@
 // Import required libraries to use
 const fs = require('node:fs');
 const path = require('node:path');
-const { Client, GatewayIntentBits, Collection, ClientUser, Events } = require("discord.js");
+const { Client, GatewayIntentBits, Collection, ClientUser, Events, EmbedBuilder } = require("discord.js");
 require("dotenv").config();
 
 // Connect to Discord client
@@ -45,7 +45,11 @@ client.on(Events.InteractionCreate, async interaction => {
         await command.execute(interaction);
     } catch (err) {
         console.error(err);
-        await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true});
+        const errorEmbed = new EmbedBuilder()
+            .setColor('#7A0019')
+            .setTitle('GoldyRL - Error')
+            .setDescription('There was an error while executing this command!');
+        await interaction.reply({ embeds: [errorEmbed], ephemeral: true});
     }
 });
 
