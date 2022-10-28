@@ -28,7 +28,12 @@ module.exports = {
         const embed = new EmbedBuilder()
             .setColor('#32CD32')
             .setTitle('GoldyRL - Added Match')
-            .setDescription('Successfully added the match information to the database')
+            .setDescription('Successfully added the match information to the database');
+        
+        const teamOne = interaction.options.getString('team_one');
+        const teamOneScore = interaction.options.getInteger('team_one_score');
+        const teamTwo = interaction.options.getString('team_two');
+        const teamTwoScore = interaction.options.getInteger('team_two_score');
         await interaction.reply({ embeds: [embed] });
     }
 };
