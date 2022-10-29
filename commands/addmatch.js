@@ -1,4 +1,16 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { Sequelize } = require('sequelize');
+const _MatchData = require('../models/MatchData');
+
+// Connect to the database
+const sequelize = new Sequelize('database', 'user', 'password', {
+    host: 'localhost',
+    dialect: 'sqlite',
+    logging: false,
+    storage: 'matchdata.sqlite',
+});
+
+const MatchData = sequelize.define('match_data', _MatchData);
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -30,6 +42,7 @@ module.exports = {
                 .setRequired(true)
         ),
     async execute(interaction) {
+        await MatchData.sync();
         const embed = new EmbedBuilder()
             .setColor('#32CD32')
             .setTitle('GoldyRL - Added Match')
@@ -40,6 +53,23 @@ module.exports = {
         const teamTwo = interaction.options.getString('team_two');
         const teamTwoScore = interaction.options.getInteger('team_two_score');
         const leagueName = interaction.options.getString('league');
+
+        // Get today's date
+        var currentDay = new Date();
+        var dd = String(currentDay.getDate()).padStart(2, '0');
+        var mm = String(currentDay.getMonth() + 1).padStart(2, '0');
+        var yyyy = String(currentDay.getFullYear());
+
+        currentDay = mm + '-' + dd + '-' + yyyy;
+
+        const dataEntry = await MatchData.create({
+            team_one: teamOne,
+            team_one_score: teamOneScore,
+            team_two: teamTwo,
+            team_two_score: teamTwoScore,
+            date: currentDay,
+            league: leagueName
+        })
         await interaction.reply({ embeds: [embed] });
     }
 };
