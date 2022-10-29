@@ -2,10 +2,22 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { Client, GatewayIntentBits, Collection, ClientUser, Events, EmbedBuilder } = require("discord.js");
+const { Sequelize } = require('sequelize');
+const _MatchData = require('./models/MatchData');
 require("dotenv").config();
 
 // Connect to Discord client
 const client = new Client({ intents: [GatewayIntentBits.Guilds]});
+
+// Connect to the database
+const sequelize = new Sequelize('database', 'user', 'password', {
+    host: 'localhost',
+    dialect: 'sqlite',
+    logging: false,
+    storage: 'matchdata.sqlite',
+});
+
+export const MatchData = sequelize.define('match_data', _MatchData);
 
 // Store the commands
 client.commands = new Collection();
@@ -26,7 +38,8 @@ for (const file of commandFiles) {
 }
 
 // Wait for the bot to be ready and log when it is
-client.once('ready', () => {
+client.once('ready', async () => {
+    await MatchData.sync();
     console.log('GoldyRL reporting for duty!');
 })
 

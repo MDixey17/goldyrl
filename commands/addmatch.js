@@ -23,6 +23,11 @@ module.exports = {
             option.setName('team_two_score')
                 .setDescription(`Team 2's score in the completed match`)
                 .setRequired(true)
+        )
+        .addStringOption(option => 
+            option.setName('league')
+                .setDescription('The league or tournament name')
+                .setRequired(true)
         ),
     async execute(interaction) {
         const embed = new EmbedBuilder()
@@ -34,6 +39,7 @@ module.exports = {
         const teamOneScore = interaction.options.getInteger('team_one_score');
         const teamTwo = interaction.options.getString('team_two');
         const teamTwoScore = interaction.options.getInteger('team_two_score');
+        const leagueName = interaction.options.getString('league');
         await interaction.reply({ embeds: [embed] });
     }
 };

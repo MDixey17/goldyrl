@@ -17,6 +17,6 @@ module.exports = {
         type: Sequelize.STRING,
     },
     league: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
     },
 }
