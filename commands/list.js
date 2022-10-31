@@ -15,7 +15,7 @@ const MatchData = sequelize.define('match_data', _MatchData);
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('list')
-        .setDescription('lists all tags from the database'),
+        .setDescription('List all team names from the database'),
     async execute(interaction) {
         await MatchData.sync();
         const embed = new EmbedBuilder()
@@ -23,11 +23,15 @@ module.exports = {
             .setDescription('The following teams are stored in the database:')
             .setColor('#32CD32');
         const teamNames = await MatchData.findAll({attributes: ["team_one", "team_two"]});
-        console.log(teamNames);
+        let names = [];
         teamNames.forEach(element => {
+            names.push(element.team_one);
+            names.push(element.team_two);
+        })
+        let uniqueNames = [...new Set(names)];
+        uniqueNames.forEach(element => {
             embed.addFields(
-                {name: String(element.team_one), value: "==========", inline: false},
-                {name: String(element.team_two), value: "==========", inline: false}
+                {name: String(element), value: "==========", inline: false}
             )
         });
         await interaction.reply({ embeds: [embed] });
