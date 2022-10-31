@@ -26,7 +26,6 @@ module.exports = {
         
         const teamName = interaction.options.getString('team_name');
         const teamEntryToDelete = await MatchData.findOne({ where: Sequelize.or({team_one: teamName}, {team_two: teamName}), order: [ [ 'id', 'DESC'] ] });
-        console.log('Found the data entry', teamEntryToDelete.team_one);
         const deletedEntries = await MatchData.destroy({ where: {id: teamEntryToDelete.id}});
 
         const embed = new EmbedBuilder()
