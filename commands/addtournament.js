@@ -180,7 +180,10 @@ module.exports = {
                 let teamOneScore = setData.data.set.slots[0].standing.stats.score.value;
                 let teamTwoScore = setData.data.set.slots[1].standing.stats.score.value;
 
-                matchResults.push(String(teamOneList[i]) + ' ' + String(teamOneScore) + ' - ' + String(teamTwoScore) + ' ' + String(teamTwoList[i]));
+                // EDGE CASE: Check for DQ's --> indicated by -1 for team score
+                if (!(teamOneScore === -1 || teamTwoScore === -1)) {
+                    matchResults.push(String(teamOneList[i]) + ' ' + String(teamOneScore) + ' - ' + String(teamTwoScore) + ' ' + String(teamTwoList[i]));
+                }
             }).catch(err => {
                 if (err instanceof TypeError) {
                     console.log("Rate Limit in Set");
