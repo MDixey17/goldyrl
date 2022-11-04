@@ -29,10 +29,18 @@ module.exports = {
         })
         let uniqueNames = [...new Set(names)];
         let descriptionString = "The following teams are stored in the database:\n\n";
+        let maxDescriptionFlag = false;
         uniqueNames.forEach(element => {
-            descriptionString = descriptionString + String(element) + " | ";
+            if (descriptionString.length < 4095) { 
+                descriptionString = descriptionString + String(element) + " | ";
+            } else {
+                maxDescriptionFlag = true;
+            }
         });
         embed.setDescription(descriptionString);
+        if (maxDescriptionFlag) {
+            embed.setFooter("And more....");
+        }
         await interaction.reply({ embeds: [embed] });
     }
 };
