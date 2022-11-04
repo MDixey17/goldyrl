@@ -20,7 +20,6 @@ module.exports = {
         await MatchData.sync();
         const embed = new EmbedBuilder()
             .setTitle('GoldyRL - Retrieved List of Teams')
-            .setDescription('The following teams are stored in the database:')
             .setColor('#32CD32');
         const teamNames = await MatchData.findAll({attributes: ["team_one", "team_two"]});
         let names = [];
@@ -29,11 +28,11 @@ module.exports = {
             names.push(element.team_two);
         })
         let uniqueNames = [...new Set(names)];
+        let descriptionString = "The following teams are stored in the database:\n\n";
         uniqueNames.forEach(element => {
-            embed.addFields(
-                {name: String(element), value: "==========", inline: false}
-            )
+            descriptionString = descriptionString + String(element) + " | ";
         });
+        embed.setDescription(descriptionString);
         await interaction.reply({ embeds: [embed] });
     }
 };

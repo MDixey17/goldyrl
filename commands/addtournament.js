@@ -68,6 +68,14 @@ module.exports = {
             .setTitle('GoldyRL - Added Match')
             .setDescription(`Successfully added the tournament information to the database for ${tourney.getName()}`);
         
+        // Get today's date
+        var currentDay = new Date();
+        var dd = String(currentDay.getDate()).padStart(2, '0');
+        var mm = String(currentDay.getMonth() + 1).padStart(2, '0');
+        var yyyy = String(currentDay.getFullYear());
+
+        currentDay = mm + '-' + dd + '-' + yyyy;
+        
         // Get the matches
         let matchResults = [];
         let teamOneList = [];
@@ -182,7 +190,15 @@ module.exports = {
 
                 // EDGE CASE: Check for DQ's --> indicated by -1 for team score
                 if (!(teamOneScore === -1 || teamTwoScore === -1)) {
-                    matchResults.push(String(teamOneList[i]) + ' ' + String(teamOneScore) + ' - ' + String(teamTwoScore) + ' ' + String(teamTwoList[i]));
+                    //matchResults.push(String(teamOneList[i]) + ' ' + String(teamOneScore) + ' - ' + String(teamTwoScore) + ' ' + String(teamTwoList[i]));
+                    const dataEntry = MatchData.create({
+                        team_one: teamOneList[i],
+                        team_one_score: teamOneScore,
+                        team_two: teamTwoList[i],
+                        team_two_score: teamTwoScore,
+                        date: currentDay,
+                        league: tourney.getName()
+                    });
                 }
             }).catch(err => {
                 if (err instanceof TypeError) {
@@ -198,9 +214,9 @@ module.exports = {
         console.log("Rate Limit Counter: ", rateLimitCounter);
         
         // Print the match results
-        for (let i = 0; i < matchResults.length; i++) {
+        /* for (let i = 0; i < matchResults.length; i++) {
             console.log(matchResults[i]);
-        }
+        } */
         await interaction.editReply( { embeds: [embed] } );
     }
 };
