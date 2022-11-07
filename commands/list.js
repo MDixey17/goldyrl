@@ -27,12 +27,12 @@ module.exports = {
             names.push(element.team_one);
             names.push(element.team_two);
         })
-        let uniqueNames = [...new Set(names)];
+        let uniqueNames = [...new Set(names.sort())];
         let descriptionString = "The following teams are stored in the database:\n\n";
         let maxDescriptionFlag = false;
         uniqueNames.forEach(element => {
             if (descriptionString.length < 4095) { 
-                descriptionString = descriptionString + String(element) + " | ";
+                descriptionString = descriptionString + String(element) + "\n";
             } else {
                 maxDescriptionFlag = true;
             }
