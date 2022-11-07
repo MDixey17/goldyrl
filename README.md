@@ -1,4 +1,4 @@
-# GoldyRL - A Rocket League Discord Bot
+# GoldyRL - An Esports Discord Bot
 
 ## Authors
 Project Leader: 
@@ -8,17 +8,36 @@ Project Contributors:
 Corbin Donner - Nut
 
 ## Purpose
-GoldyRL was designed to allow for communities to track their team's stats and matches in an automated fashion. The first iteration required significant manual input and would be inefficient to users. With the recent notice of start.gg's API, this has become possible.
+GoldyRL is an Esports Discord Bot that is designed to store competitive match history in any significant event as determined by its users. With an original design for Rocket League, it has the capability to store hundreds of competitive matches and rosters to provide quick access to a vast amount of information.
 
-The original community is the University of Minnesota Rocket League club but this bot may be open to extensibility to fulfill the needs of other communities. 
+Some applications for GoldyRL include but are not limited to
+ - Graphic Designers able to obtain matchup information
+ - Statisicians immediately find out matchup history between two rivals
+ - Broadcasters quickly create scenes showing the next team's competitive match history
+ - Casters can get a quick refresher of the last time a team was successful in a competitive environment
+
+There is no limit to what GoldyRL can't do for the competitive esports community. With built-in permission handling to prevent cyber attacks and internet trolls from disabling the program, it is a safe addition to your Discord server.
 
 ## How To Use
-GoldyRL must be in your Discord server in order for users to have access to its abilities. The following roles must also be added and assigned to at least one user in your community
- 1. Operations
- Members with this role will have unrestricted access to the database that GoldyRL maintains.
+For GoldyRL to be utilized, it must join your Discord server. From there, GoldyRL relies on two important Discord roles to limit user permissions:
 
- 2. GoldyRL Master
- Members with this role will be able to add new data to the database, but not modify those contents.
+1. `Operations`
+Any user with this role will have unrestricted access to GoldyRL and its commands. Please be very careful with deciding who has this role.
+
+2. `GoldyRL Master`
+Users with this role will be able to execute all the commands EXCEPT the `/reset` command as that is kept exclusive to `Operations` users. However, it is still important to note that Discord server administrators should be careful distributing this role.
+
+## Commands
+GoldyRL is able to perform several commands successfully. Please keep an eye on this README as GoldyRL will only grow more capable of what it can do.
+
+1. `/addmatch [TEAM_ONE] [TEAM_ONE_SCORE] [TEAM_TWO] [TEAM_TWO_SCORE]`
+2. `/addtournament [TOURNAMENT_SLUG] [EVENT_SLUG]`
+3. `/deletelast [TEAM_NAME]`
+4. `/getdata [TEAM_NAME]`
+5. `/gettournamentinfo [TOURNAMENT_SLUG] [EVENT_SLUG]`
+6. `/list`
+7. `/matchup [TEAM_ONE] [TEAM_TWO]`
+8. `/reset`
 
 ## Developers - How To Test
 After cloning the repository, please follow these instructions to corectly set up GoldyRL:
@@ -32,6 +51,7 @@ This file will contain the appropriate variables that must be kept hidden to pre
  - TEST_GUILD_ID
  - UMN_GUILD_ID
  - CLIENT_ID
+ - START_GG_TOKEN
 
 3. Run `node index.js` to activate the bot!
 
