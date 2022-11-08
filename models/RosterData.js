@@ -3,6 +3,7 @@ const Sequelize = require('sequelize');
 module.exports = {
     team_name: {
         type: Sequelize.STRING,
+        unique: true,
     },
     player_one: {
         type: Sequelize.STRING,

@@ -65,7 +65,7 @@ module.exports = {
 
         const embed = new EmbedBuilder()
             .setColor('#32CD32')
-            .setTitle('GoldyRL - Added Match')
+            .setTitle('GoldyRL - Added Tournament')
             .setDescription(`Successfully added the tournament information to the database for ${tourney.getName()}`);
         
         // Get today's date
