@@ -41,6 +41,16 @@ client.on(Events.InteractionCreate, async interaction => {
         return;
     }
 
+    // Make sure commands are only executed via the #match-history channel
+    if (interaction.channel.name !== "match-history") {
+        const channelEmbed = new EmbedBuilder()
+            .setColor('#7A0019')
+            .setTitle('GoldyRL - Wrong Channel')
+            .setDescription('Please use the #match-history channel')
+        await interaction.reply({ embeds: [channelEmbed] });
+        return;
+    }
+
     try {
         await command.execute(interaction);
     } catch (err) {
