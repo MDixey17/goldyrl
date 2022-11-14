@@ -31,16 +31,17 @@ module.exports = {
         let descriptionString = "The following teams are stored in the database:\n\n";
         let maxDescriptionFlag = false;
         uniqueNames.forEach(element => {
-            if (descriptionString.length + String(element).length + 2 < 4095) { 
+            if (descriptionString.length + String(element).length + 2 < 4082) { 
                 descriptionString = descriptionString + String(element) + "\n";
             } else {
                 maxDescriptionFlag = true;
             }
         });
-        embed.setDescription(descriptionString);
         if (maxDescriptionFlag) {
-            embed.setFooter("And more....");
+            descriptionString += "And more..."
         }
+        embed.setDescription(descriptionString);
+        
         await interaction.reply({ embeds: [embed] });
     }
 };

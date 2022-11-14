@@ -27,9 +27,15 @@ Any user with this role will have unrestricted access to GoldyRL and its command
 2. `GoldyRL Master`
 Users with this role will be able to execute all the commands EXCEPT the `/reset` command as that is kept exclusive to `Operations` users. However, it is still important to note that Discord server administrators should be careful distributing this role.
 
+GoldyRL will only respond to commands requested in a text channel named exactly `match-history` (should appear as `#match-history` on the side list of channels in the Discord server). 
+
+__IMPORTANT NOTICE__
+If GoldyRL replies to a message with `... GoldyRL is thinking...`, do NOT execute another command as GoldyRL needs time to finish completing it's response before it can process another command.
+
 ## Commands
 GoldyRL is able to perform several commands successfully. Please keep an eye on this README as GoldyRL will only grow more capable of what it can do.
 
+__MATCH COMMANDS__
 1. `/addmatch [TEAM_ONE] [TEAM_ONE_SCORE] [TEAM_TWO] [TEAM_TWO_SCORE]`
 2. `/addtournament [TOURNAMENT_SLUG] [EVENT_SLUG]`
 3. `/deletelast [TEAM_NAME]`
@@ -38,6 +44,19 @@ GoldyRL is able to perform several commands successfully. Please keep an eye on 
 6. `/list`
 7. `/matchup [TEAM_ONE] [TEAM_TWO]`
 8. `/reset`
+
+__ROSTER COMMANDS__
+1. `/addroster [TEAM_NAME] [PLAYER_ONE] [PLAYER_TWO] [PLAYER_THREE] [optional: add up to 3 more players]`
+2. `/checkplayer [PLAYER_NAME]`
+3. `/checkregistration [TOURNAMENT_SLUG] [EVENT_SLUG] [TEAM_NAME]`
+4. `/checkteam [TEAM_NAME]`
+5. `/deleteroster [TEAM_NAME]`
+6. `/getplacement [TOURNAMENT_SLUG] [EVENT_SLUG] [TEAM_NAME]`
+7. `/getroster [TEAM_NAME]`
+8. `/gettourneyrosters [TOURNAMENT_SLUG] [EVENT_SLUG]`
+9. `/listrosters`
+10. `/resetrosters`
+11. `/rostersub`
 
 ## Developers - How To Test
 After cloning the repository, please follow these instructions to corectly set up GoldyRL:
