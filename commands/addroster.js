@@ -50,6 +50,11 @@ module.exports = {
             option.setName('player_six')
                 .setDescription('The 6th player of the team')
                 .setRequired(false)
+        )
+        .addStringOption(option =>
+            option.setName('aliases')
+                .setDescription('Alternate team names, separated by commas')
+                .setRequired(false)
         ),
     async execute(interaction) {
         if (!interaction.member.roles.cache.some(role => role.name === "GoldyRL Master" || role.name === "Operations")) {
@@ -68,6 +73,11 @@ module.exports = {
         const p4 = interaction.options.getString('player_four') ?? "-";
         const p5 = interaction.options.getString('player_five') ?? "-";
         const p6 = interaction.options.getString('player_six') ?? "-";
+        let aliases = interaction.options.getString('aliases') ?? '';
+
+        if (!aliases.endsWith(',') && aliases.length > 0) {
+            aliases += ',';
+        }
 
         const dataEntry = await RosterData.create({
             team_name: teamName,
@@ -76,7 +86,8 @@ module.exports = {
             player_three: p3,
             player_four: p4,
             player_five: p5,
-            player_six: p6
+            player_six: p6,
+            aliases: aliases
         });
 
         const embed = new EmbedBuilder()

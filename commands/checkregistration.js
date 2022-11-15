@@ -1,10 +1,21 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const startgg = require('smashgg.js');
-const { execute } = require('./getrosterfromtourney');
+const { Sequelize } = require('sequelize');
+const _RosterData = require('../models/RosterData');
 require('dotenv').config();
 
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 const startggURL = 'https://api.start.gg/gql/alpha';
+
+// Connect to the database
+const sequelize = new Sequelize('database', 'user', 'password', {
+    host: 'localhost',
+    dialect: 'sqlite',
+    logging: false,
+    storage: 'rosters.sqlite',
+});
+
+const RosterData = sequelize.define('roster_data', _RosterData);
 
 // Log into the start.gg API
 startgg.initialize(process.env.START_GG_TOKEN);
@@ -40,9 +51,15 @@ module.exports = {
         ),
     async execute(interaction) {
         await interaction.deferReply();
+        await RosterData.sync();
         const tourneyName = interaction.options.getString('tourney_slug');
         const eventName = interaction.options.getString('event_slug');
         const teamName = interaction.options.getString('team_name');
+        const rosterInfo = await RosterData.findOne({where: {team_name: teamName}});
+        let teamAliases = [];
+        if (rosterInfo.get('aliases')) {
+            teamAliases = rosterInfo.get('aliases').split(',');
+        }
 
         // Find tournament using smashgg.js
         let tourney = await Event.get(tourneyName, eventName);
@@ -114,6 +131,18 @@ module.exports = {
                     if (retTeamName === teamName) {
                         foundTeam = true;
                         break;
+                    }
+                    else {
+                        // Check aliases
+                        for (let j = 0; j < teamAliases.length; j++) {
+                            if (retTeamName === teamAliases[j]) {
+                                foundTeam = true;
+                                break;
+                            }
+                        }
+                        if (foundTeam) {
+                            break;
+                        }
                     }
                 }
             })

@@ -113,7 +113,7 @@ module.exports = {
                     },
                 })
             }).then(r => r.json())
-            .then(data => {
+            .then(async data => {
                 let loopCondition = 25; // General case
                 if (numRostersFound + loopCondition > numRosters) {
                     /*
@@ -155,27 +155,57 @@ module.exports = {
                         playerNumber += 1;
                     });
 
-                    try {
-                        const dataEntry = RosterData.create({
-                            team_name: teamName,
-                            player_one: p1,
-                            player_two: p2,
-                            player_three: p3,
-                            player_four: p4,
-                            player_five: p5,
-                            player_six: p6
-                        });
+                    // BEFORE ADDING, Check to make sure the roster doesn't exist under a different name
+                    // Get team name and all players
+                    const allRosters = await RosterData.findAll({ attributes: ['team_name', 'player_one', 'player_two', 'player_three', 'player_four', 'player_five', 'player_six']});
+                    let addedAlias = false;
+                    for (let i = 0; i < allRosters.length; i++) {
+                        // Check to see if roster players match player's found from start.gg
+                        if (p1 === allRosters[i].player_one && p2 === allRosters[i].player_two && p3 === allRosters[i].player_three && p4 === allRosters[i].player_four && p5 === allRosters[i].player_five && p6 === allRosters[i].player_six && teamName !== allRosters[i].team_name) {
+                            // We found a duplicate roster; add the team name to aliases
+                            const currTeam = await RosterData.findOne({ where: {team_name: allRosters[i].team_name}});
+                            let currAliases = currTeam.get('aliases');
+                            if (currAliases === 'null' || currAliases === null) {
+                                currAliases = teamName + ',';
+                            } else if (currAliases.includes(teamName)) {
+                                // The alias already exists for this team, so don't do anything
+                            } else {
+                                currAliases += teamName + ',';
+                            }
+                            
+                            // Update the data entry
+                            const changedRows = await RosterData.update({ aliases: currAliases }, { where: {team_name: allRosters[i].team_name} });
+                            console.log('Found duplicate ROSTER! Added alias');
+                            addedAlias = true;
+                        }
+                        if (addedAlias) {
+                            break;
+                        }
                     }
-                    catch (err) {
-                        if (err.name === 'SequelizeUniqueConstraintError') { 
-                            console.log('Found a duplicate team name! Ignoring')
+                    // If we didn't add an alias, add as new team
+                    if (!addedAlias) {
+                        try {
+                            const dataEntry = await RosterData.create({
+                                team_name: teamName,
+                                player_one: p1,
+                                player_two: p2,
+                                player_three: p3,
+                                player_four: p4,
+                                player_five: p5,
+                                player_six: p6
+                            });
                         }
-                        else if (err instanceof TypeError) {
-                            console.log(err);
-                            rateLimitCounter += 1;
-                        }
-                        else {
-                            console.log(err);
+                        catch (err) {
+                            if (err.name === 'SequelizeUniqueConstraintError') { 
+                                console.log('Found a duplicate team name! Ignoring')
+                            }
+                            else if (err instanceof TypeError) {
+                                console.log(err);
+                                rateLimitCounter += 1;
+                            }
+                            else {
+                                console.log(err);
+                            }
                         }
                     }
                 }

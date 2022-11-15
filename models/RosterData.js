@@ -23,4 +23,8 @@ module.exports = {
     player_six: {
         type: Sequelize.STRING,
     },
+    aliases: {
+        type: Sequelize.STRING,
+        allowNull: true,
+    },
 }
