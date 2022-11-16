@@ -27,7 +27,14 @@ module.exports = {
         teamNames.forEach(entry => {
             names.push(entry.team_name);
         });
-
+        if (names.length === 0) {
+            const embed = new EmbedBuilder()
+                .setColor('#FFFF00')
+                .setTitle('GoldyRL - No Teams Found in Database')
+                .setDescription(`There are no rosters stored in the database`)
+            await interaction.reply({ embeds: [embed] });
+            return;
+        }
         let uniqueNames = [...new Set(names.sort())];
         let descriptionString = "The following teams are stored in the rosters database:\n\n";
         let maxDescriptionFlag = false;

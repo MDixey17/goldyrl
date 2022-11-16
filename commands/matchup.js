@@ -133,6 +133,14 @@ module.exports = {
                 }
             )
         });
+
+        if (matchupDataOne.length === 0 && matchupDataTwo.length === 0) {
+            embed.addFields({
+                name: `No matchup data found between ${teamOne} and ${teamTwo}`,
+                value: 'This will be the first time in at least 45 days these teams will play each other.',
+                inline: false
+            })
+        }
         
         await interaction.reply({ embeds: [embed] });
     }

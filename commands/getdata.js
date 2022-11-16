@@ -30,6 +30,15 @@ module.exports = {
             .setColor('#32CD32');
         const teamInfo1 = await MatchData.findAll({where: {team_one: team_name}});
         const teamInfo2 = await MatchData.findAll({where: {team_two: team_name}});
+        if (teamInfo1.length === 0 && teamInfo2.length === 0) {
+            // No data found
+            const embed = new EmbedBuilder()
+                .setColor('#FFFF00')
+                .setTitle('GoldyRL - No Match Data')
+                .setDescription(`There is no match data for ${team_name}`)
+            await interaction.reply({ embeds: [embed] });
+            return;
+        }
         let embedDescription = `Data for ${team_name}\n\n`;
         let maxDescFlag = false;
         for(let i = 0; i < teamInfo1.length; i++) {

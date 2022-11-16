@@ -34,13 +34,22 @@ module.exports = {
         
         const teamName = interaction.options.getString('team_name');
         const teamEntryToDelete = await MatchData.findOne({ where: Sequelize.or({team_one: teamName}, {team_two: teamName}), order: [ [ 'id', 'DESC'] ] });
-        const deletedEntries = await MatchData.destroy({ where: {id: teamEntryToDelete.id}});
+        if (teamEntryToDelete) {
+            const deletedEntries = await MatchData.destroy({ where: {id: teamEntryToDelete.id}});
+            const embed = new EmbedBuilder()
+                .setColor('#32CD32')
+                .setTitle('GoldyRL - Deleted Last Match')
+                .setDescription(`Removed last entry for ${teamName}`);
 
-        const embed = new EmbedBuilder()
-            .setColor('#32CD32')
-            .setTitle('GoldyRL - Deleted Last Match')
-            .setDescription(`Removed last entry for ${teamName}`);
-
-        await interaction.reply({ embeds: [embed] });
+            await interaction.reply({ embeds: [embed] });
+        }
+        else {
+            // No entries deleted
+            const embed = new EmbedBuilder()
+                .setColor('#FFFF00')
+                .setTitle('GoldyRL - No Matches Removed')
+                .setDescription(`No matches were removed for ${teamName}`)
+            await interaction.reply({ embeds: [embed] });
+        }
     }
 };

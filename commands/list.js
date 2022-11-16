@@ -26,7 +26,15 @@ module.exports = {
         teamNames.forEach(element => {
             names.push(element.team_one);
             names.push(element.team_two);
-        })
+        });
+        if (names.length === 0) {
+            const embed = new EmbedBuilder()
+                .setColor('#FFFF00')
+                .setTitle('GoldyRL - No Teams Found in Database')
+                .setDescription(`There are no matches stored in the database`)
+            await interaction.reply({ embeds: [embed] });
+            return;
+        }
         let uniqueNames = [...new Set(names.sort())];
         let descriptionString = "The following teams are stored in the database:\n\n";
         let maxDescriptionFlag = false;

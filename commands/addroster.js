@@ -79,22 +79,32 @@ module.exports = {
             aliases += ',';
         }
 
-        const dataEntry = await RosterData.create({
-            team_name: teamName,
-            player_one: p1,
-            player_two: p2,
-            player_three: p3,
-            player_four: p4,
-            player_five: p5,
-            player_six: p6,
-            aliases: aliases
-        });
-
-        const embed = new EmbedBuilder()
-            .setColor('#32CD32')
-            .setTitle('GoldyRL - Added Roster')
-            .setDescription(`Successfully added the roster for ${teamName}`);
-
-        await interaction.reply({ embeds: [embed] });
+        try {
+            const dataEntry = await RosterData.create({
+                team_name: teamName,
+                player_one: p1,
+                player_two: p2,
+                player_three: p3,
+                player_four: p4,
+                player_five: p5,
+                player_six: p6,
+                aliases: aliases
+            });
+    
+            const embed = new EmbedBuilder()
+                .setColor('#32CD32')
+                .setTitle('GoldyRL - Added Roster')
+                .setDescription(`Successfully added the roster for ${teamName}`);
+    
+            await interaction.reply({ embeds: [embed] });
+        } catch (err) {
+            if (err.name === 'SequelizeUniqueConstraintError') {
+                const embed = new EmbedBuilder()
+                    .setColor('#FFFF00')
+                    .setTitle('GoldyRL - Roster Already Exists')
+                    .setDescription(`There is already a roster for ${teamName} in the database!`)
+                await interaction.reply({ embeds: [embed] });
+            }
+        }
     }
 }

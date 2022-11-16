@@ -76,14 +76,6 @@ module.exports = {
             .setTitle('GoldyRL - Added Tournament')
             .setDescription(`Successfully added the tournament information to the database for ${tourney.getName()}`);
         
-        // Get today's date
-        var currentDay = new Date();
-        var dd = String(currentDay.getDate()).padStart(2, '0');
-        var mm = String(currentDay.getMonth() + 1).padStart(2, '0');
-        var yyyy = String(currentDay.getFullYear());
-
-        currentDay = mm + '-' + dd + '-' + yyyy;
-        
         // Get the matches
         let matchResults = [];
         let teamOneList = [];
@@ -185,7 +177,7 @@ module.exports = {
                     Authorization: 'Bearer ' + process.env.START_GG_TOKEN
                 },
                 body: JSON.stringify({
-                    query: "query set($setId: ID!) {set(id: $setId) {slots {standing {placement stats { score {value}}}}}}",
+                    query: "query set($setId: ID!) {set(id: $setId) {startedAt slots {standing {placement stats { score {value}}}}}}",
                     variables: {
                         setId: setIDs[i]
                     },
@@ -195,6 +187,11 @@ module.exports = {
                 //console.log(setData.data.set.slots[0].standing);
                 let teamOneScore = setData.data.set.slots[0].standing.stats.score.value;
                 let teamTwoScore = setData.data.set.slots[1].standing.stats.score.value;
+                let d = new Date(setData.data.set.startedAt * 1000);
+                var dd = String(d.getDate()).padStart(2, '0');
+                var mm = String(d.getMonth() + 1).padStart(2, '0');
+                var yyyy = String(d.getFullYear());
+                const currentDay = mm + "-" + dd + "-" + yyyy;
 
                 // EDGE CASE: Check for DQ's --> indicated by -1 for team score
                 if (!(teamOneScore === -1 || teamTwoScore === -1)) {
@@ -207,6 +204,7 @@ module.exports = {
                         date: currentDay,
                         league: tourney.getName()
                     });
+
                 }
             }).catch(err => {
                 if (err instanceof TypeError) {

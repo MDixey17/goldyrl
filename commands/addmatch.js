@@ -40,6 +40,11 @@ module.exports = {
             option.setName('league')
                 .setDescription('The league or tournament name')
                 .setRequired(true)
+        )
+        .addStringOption(option => 
+            option.setName('date')
+                .setDescription('The date the match was played in mm-dd-yyyy format')
+                .setRequired(false)
         ),
     async execute(interaction) {
         if (!interaction.member.roles.cache.some(role => role.name === "GoldyRL Master" || role.name === "Operations")) {
@@ -69,7 +74,7 @@ module.exports = {
         var mm = String(currentDay.getMonth() + 1).padStart(2, '0');
         var yyyy = String(currentDay.getFullYear());
 
-        currentDay = mm + '-' + dd + '-' + yyyy;
+        currentDay = interaction.options.getString('date') ?? mm + '-' + dd + '-' + yyyy;
 
         const dataEntry = await MatchData.create({
             team_one: teamOne,
