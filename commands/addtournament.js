@@ -45,6 +45,14 @@ module.exports = {
                 .setRequired(true)
         ),
     async execute(interaction) {
+        if (!interaction.member.roles.cache.some(role => role.name === "GoldyRL Master" || role.name === "Operations")) {
+            const noPermissionEmbed = new EmbedBuilder()
+                .setColor('#7A0019')
+                .setTitle('GoldyRL - Permission Denied')
+                .setDescription(`You don't have permission to execute /addtournament.\nOnly GoldyRL, Operations, and Admin users can execute this command.`);
+            await interaction.reply( {embeds: [noPermissionEmbed]} );
+            return;
+        }
         await MatchData.sync();
         await interaction.deferReply();
         const tourneyName = interaction.options.getString('tourney_slug');

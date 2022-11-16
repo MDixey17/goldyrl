@@ -27,6 +27,14 @@ module.exports = {
                 .setRequired(true)
         ),
     async execute(interaction) {
+        if (!interaction.member.roles.cache.some(role => role.name === "GoldyRL Master" || role.name === "Operations")) {
+            const noPermissionEmbed = new EmbedBuilder()
+                .setColor('#7A0019')
+                .setTitle('GoldyRL - Permission Denied')
+                .setDescription(`You don't have permission to execute /addalias.\nOnly GoldyRL, Operations, and Admin users can execute this command.`);
+            await interaction.reply( {embeds: [noPermissionEmbed]} );
+            return;
+        }
         RosterData.sync();
         const teamName = interaction.options.getString('team_name');
         const alias = interaction.options.getString('alias');
