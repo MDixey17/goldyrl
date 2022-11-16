@@ -3,6 +3,29 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { Client, GatewayIntentBits, Collection, ClientUser, Events, EmbedBuilder } = require("discord.js");
 require("dotenv").config();
+const { Sequelize } = require('sequelize');
+
+const _MatchData = require('./models/MatchData');
+const _RosterData = require('./models/RosterData');
+
+// Connect to the database
+const sequelize = new Sequelize('database', 'user', 'password', {
+    host: 'localhost',
+    dialect: 'sqlite',
+    logging: false,
+    storage: 'matchdata.sqlite',
+});
+
+const MatchData = sequelize.define('match_data', _MatchData);
+
+const sequelize2 = new Sequelize('database', 'user', 'password', {
+    host: 'localhost',
+    dialect: 'sqlite',
+    logging: false,
+    storage: 'rosters.sqlite',
+});
+
+const RosterData = sequelize2.define('roster_data', _RosterData);
 
 // Connect to Discord client
 const client = new Client({ intents: [GatewayIntentBits.Guilds]});
@@ -27,6 +50,37 @@ for (const file of commandFiles) {
 
 // Wait for the bot to be ready and log when it is
 client.once('ready', async () => {
+    // Cleaning the match_history database
+    console.log('Removing matches older than 45 days...');
+    await MatchData.sync();
+    const matchEntries = await MatchData.findAll({ attributes: ['date'] });
+    let matchesToDelete = []; // Contains the IDs according to the database
+    let today = new Date();
+    // Format of date = mm-dd-yyyy
+    // Split on the - character
+    matchEntries.forEach(e => {
+        const entry = e.date.split('-');
+        const entryDD = entry[1];
+        const entryMM = entry[0];
+        const entryYYYY = entry[2];
+        const temp = new Date(entryMM + '/' + entryDD + '/' + entryYYYY);
+        const diffTime = Math.abs(today - temp); // This is in milliseconds
+        const numDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        if (numDays >= 45) {
+            matchesToDelete.push(e.id);
+        }
+    });
+
+    let deletedMatchesCount = 0;
+    for (let i = 0; i < matchesToDelete; i++) {
+        deletedMatchesCount += (await MatchData.destroy({ where: { id: matchesToDelete[i]}}));
+    }
+    console.log('Matches Deleted: ', deletedMatchesCount);
+
+    // Cleaning the roster database
+    console.log('Removing rosters older than 180 days...');
+    await RosterData.sync();
+
     console.log('GoldyRL reporting for duty!');
 })
 
