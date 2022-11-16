@@ -36,12 +36,12 @@ module.exports = {
         .setDescription('Add tournament matches to the database')
         .addStringOption(option => 
             option.setName('tourney_slug')
-                .setDescription('Name of the tournament as one word, ALL LOWERCASE, with _ instead of spaces')
+                .setDescription('Tournament Slug according to start.gg URL')
                 .setRequired(true)
         )
         .addStringOption(option => 
             option.setName('event_slug')
-                .setDescription('Name of the event as one word, ALL LOWERCASE, with _ instead of spaces')
+                .setDescription('Event Slug according to start.gg URL')
                 .setRequired(true)
         ),
     async execute(interaction) {
