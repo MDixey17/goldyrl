@@ -29,6 +29,11 @@ module.exports = {
 
         // Find the tournament using smashgg.js
         let tourney = await Event.get(tourneyName, eventName);
+        let d = new Date(tourney.startAt * 1000);
+        var dd = String(d.getDate()).padStart(2, '0');
+        var mm = String(d.getMonth() + 1).padStart(2, '0');
+        var yyyy = String(d.getFullYear());
+        const currentDay = mm + "-" + dd + "-" + yyyy;
 
         const embed = new EmbedBuilder()
             .setColor('#32CD32')
@@ -52,6 +57,11 @@ module.exports = {
             .addFields({
                 name: 'Number of Entrants',
                 value: `${tourney.getNumEntrants()}`,
+                inline: false,
+            })
+            .addFields({
+                name: 'Start Date',
+                value: currentDay,
                 inline: false,
             })
             

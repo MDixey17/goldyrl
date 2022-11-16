@@ -46,7 +46,7 @@ module.exports = {
                     Authorization: 'Bearer ' + process.env.START_GG_TOKEN
                 },
                 body: JSON.stringify({
-                    query: `query TournamentsByVideogame($perPage: Int!, $videogameId: ID!) {tournaments(query: {perPage: $perPage page: 1 sortBy: "startAt desc" filter: {past: false videogameIds: [$videogameId]}}) {nodes {id countryCode name numAttendees slug}}}`,
+                    query: `query TournamentsByVideogame($perPage: Int!, $videogameId: ID!) {tournaments(query: {perPage: $perPage page: 1 sortBy: "startAt desc" filter: {past: false videogameIds: [$videogameId]}}) {nodes {id countryCode name numAttendees slug startAt}}}`,
                     variables: {
                         perPage: 10,
                         videogameId: gameID
@@ -57,9 +57,14 @@ module.exports = {
             let tourneys = [...new Set(data.data.tournaments.nodes)];
             let defaultResponse = 'Not Available';
             tourneys.forEach(t => {
+                let d = new Date(t.startAt * 1000);
+                var dd = String(d.getDate()).padStart(2, '0');
+                var mm = String(d.getMonth() + 1).padStart(2, '0');
+                var yyyy = String(d.getFullYear());
+                const currentDay = mm + "-" + dd + "-" + yyyy;
                 embed.addFields({
                     name: `${t.name}`,
-                    value: `ID: ${t.id}\nCountry: ${t.countryCode ?? defaultResponse}\nNumber of Attendees: ${t.numAttendees ?? defaultResponse}\nSlug: ${t.slug}`,
+                    value: `ID: ${t.id}\nCountry: ${t.countryCode ?? defaultResponse}\nNumber of Attendees: ${t.numAttendees ?? defaultResponse}\nURL: start.gg/${t.slug}\nStart Date: ${currentDay}`,
                     inline: false
                 });
             });
