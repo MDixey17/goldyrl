@@ -57,8 +57,10 @@ module.exports = {
         const teamName = interaction.options.getString('team_name');
         const rosterInfo = await RosterData.findOne({where: {team_name: teamName}});
         let teamAliases = [];
-        if (rosterInfo.get('aliases')) {
-            teamAliases = rosterInfo.get('aliases').split(',');
+        if (rosterInfo) {
+            if (rosterInfo.get('aliases')) {
+                teamAliases = rosterInfo.get('aliases').split(',');
+            }
         }
 
         // Find tournament using smashgg.js
