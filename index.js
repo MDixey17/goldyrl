@@ -72,7 +72,7 @@ client.once('ready', async () => {
     });
 
     let deletedMatchesCount = 0;
-    for (let i = 0; i < matchesToDelete; i++) {
+    for (let i = 0; i < matchesToDelete.length; i++) {
         deletedMatchesCount += (await MatchData.destroy({ where: { id: matchesToDelete[i]}}));
     }
     console.log('Matches Deleted: ', deletedMatchesCount);
@@ -80,10 +80,27 @@ client.once('ready', async () => {
     // Cleaning the roster database
     console.log('Removing rosters older than 180 days...');
     await RosterData.sync();
+    const rosterEntries = await RosterData.findAll({attributes: ['createdAt']});
+    let rostersToDelete = []; // Contains data entry IDs of rosters
+    rosterEntries.forEach(r => {
+        let t = new Date(r.createdAt);
+        const diffTime = Math.abs(today - t);
+        const numDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        if (numDays >= 180) {
+            matchesToDelete.push(t.id);
+        }
+    });
+
+    let deletedRosterCount = 0;
+    for (let i = 0; i < rostersToDelete.length; i++) {
+        deletedRosterCount += (await RosterData.destroy({ where: { id: rostersToDelete[i]}}));
+    }
+    console.log('Rosters Deleted: ', deletedRosterCount);
 
     console.log('GoldyRL reporting for duty!');
 })
 
+let timeSinceLastCommand = new Date();
 // Respond to messages
 client.on(Events.InteractionCreate, async interaction => {
     if (!interaction.isChatInputCommand()) return;
@@ -94,6 +111,20 @@ client.on(Events.InteractionCreate, async interaction => {
         console.error(`No command matching ${interaction.commandName} was found.`);
         return;
     }
+
+    const currentTime = new Date();
+    const timeDifference = Math.abs(currentTime - timeSinceLastCommand); // Time in milliseconds
+    const numSeconds = timeDifference / 1000;
+    //console.log('numSeconds: ', numSeconds);
+    if (numSeconds < 10) {
+        const cooldownEmbed = new EmbedBuilder()
+            .setColor('#7A0019')
+            .setTitle('GoldyRL - Cooldown In Progress')
+            .setDescription('10 second cooldown in effect to clear cache and memory from previous command. Please wait and try again momentarily.');
+        await interaction.reply({ embeds: [cooldownEmbed]});
+        return;
+    }
+    timeSinceLastCommand = currentTime;
 
     // Make sure commands are only executed via the #match-history channel
     if (interaction.channel.name !== "match-history") {
