@@ -254,6 +254,29 @@ module.exports = {
             .setColor('#32CD32')
             .setTitle('GoldyRL - Added Rosters From Tournament')
             .setDescription(`Successfully added the rosters to the database from ${tourney.getName()}`);
+
+        sleep(1000);    
+        await fetch(startggURL, {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json',
+                'Accept': 'application/json',
+                Authorization: 'Bearer ' + process.env.START_GG_TOKEN
+            },
+            body: JSON.stringify({
+                query: "query TournamentQuery($slug: String) {tournament(slug: $slug){id name images {url}}}",
+                variables: {
+                    slug: tourneyName
+                },
+            })
+        }).then(r => r.json())
+        .then(data => {
+            if (data.data.tournament.images[0].url) {
+                embed.setThumbnail(data.data.tournament.images[0].url);
+            }
+        }).catch(err => {
+            console.log(err);
+        })
         
         await interaction.editReply( { embeds: [embed] } );
     }

@@ -163,7 +163,7 @@ module.exports = {
             sleep(1000);
         }
 
-        sleep(10000);
+        sleep(1000);
 
         // Get the scores of the matches using the setIDs
         for (let i = 0; i < setIDs.length; i++) {
@@ -223,6 +223,28 @@ module.exports = {
         /* for (let i = 0; i < matchResults.length; i++) {
             console.log(matchResults[i]);
         } */
+        await fetch(startggURL, {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json',
+                'Accept': 'application/json',
+                Authorization: 'Bearer ' + process.env.START_GG_TOKEN
+            },
+            body: JSON.stringify({
+                query: "query TournamentQuery($slug: String) {tournament(slug: $slug){id name images {url}}}",
+                variables: {
+                    slug: tourneyName
+                },
+            })
+        }).then(r => r.json())
+        .then(data => {
+            if (data.data.tournament.images[0].url) {
+                embed.setThumbnail(data.data.tournament.images[0].url);
+            }
+        }).catch(err => {
+            console.log(err);
+        })
+        
         await interaction.editReply( { embeds: [embed] } );
     }
 };

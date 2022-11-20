@@ -2,12 +2,21 @@ const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const startgg = require('smashgg.js');
 require('dotenv').config();
 
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 const startggURL = 'https://api.start.gg/gql/alpha';
 
 // Log into the start.gg API
 startgg.initialize(process.env.START_GG_TOKEN);
 
 const Event = startgg.Event;
+
+function sleep(ms) {
+    const date = Date.now();
+    let currentDate = null;
+    do {
+        currentDate = Date.now();
+    } while (currentDate - date < ms);
+}
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -24,6 +33,7 @@ module.exports = {
                 .setRequired(true)
         ),
     async execute(interaction) {
+        await interaction.deferReply();
         const tourneyName = interaction.options.getString('tourney_slug');
         const eventName = interaction.options.getString('event_slug');
 
@@ -64,9 +74,29 @@ module.exports = {
                 value: currentDay,
                 inline: false,
             })
-            
-            
 
-        await interaction.reply({embeds: [embed]});
+        await fetch(startggURL, {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json',
+                'Accept': 'application/json',
+                Authorization: 'Bearer ' + process.env.START_GG_TOKEN
+            },
+            body: JSON.stringify({
+                query: "query TournamentQuery($slug: String) {tournament(slug: $slug){id name images {url}}}",
+                variables: {
+                    slug: tourneyName
+                },
+            })
+        }).then(r => r.json())
+        .then(data => {
+            if (data.data.tournament.images[0].url) {
+                embed.setThumbnail(data.data.tournament.images[0].url);
+            }
+        }).catch(err => {
+            console.log(err);
+        })
+
+        await interaction.editReply({embeds: [embed]});
     }
 };
