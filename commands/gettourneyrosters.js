@@ -105,7 +105,7 @@ module.exports = {
                     Authorization: 'Bearer ' + process.env.START_GG_TOKEN
                 },
                 body: JSON.stringify({
-                    query: "query EventEntrants($eventId: ID!, $page: Int!, $perPage: Int!) {event(id: $eventId) {id name entrants(query: {page: $page perPage: $perPage}) {pageInfo {total totalPages} nodes {name participants {gamerTag}}}}}",
+                    query: "query EventEntrants($eventId: ID!, $page: Int!, $perPage: Int!) {event(id: $eventId) {id name startAt entrants(query: {page: $page perPage: $perPage}) {pageInfo {total totalPages} nodes {name participants {gamerTag}}}}}",
                     variables: {
                         eventId: tourneyID,
                         page: pageNumber,
@@ -197,7 +197,35 @@ module.exports = {
                         }
                         catch (err) {
                             if (err.name === 'SequelizeUniqueConstraintError') { 
-                                console.log('Found a duplicate team name! Ignoring')
+                                // console.log('Found a duplicate team name!');
+                                // Reaching here means we found a duplicate team name, BUT the roster is NOT the same
+                                /*
+                                 * In theory, when a new tournament is added, it will be in the future.
+                                 * However, we can still check if the tournament has taken place AFTER
+                                 * the team roster entry was added (dataEntry.createdAt happened before event.startAt).
+                                 * If that is true, then we delete the old roster and add the new roster.
+                                 * Otherwise, we ignore it.
+                                */
+                               const tourneyStart = new Date(data.data.event.startAt * 1000);
+                               const rosterInfo = await RosterData.findOne({attributes: ['createdAt']}, {where: {team_name: teamName}});
+                               const rosterCreate = new Date(rosterInfo.createdAt);
+                               const timeDiff = tourneyStart - rosterCreate;
+                               if (timeDiff > 0) {
+                                // Delete and re-add
+                                const rosterEntryToDelete = await RosterData.findOne({ where: {team_name: teamName}});
+                                const rosterAliases = rosterEntryToDelete.aliases; // We want to keep these
+                                const deletedEntries = await RosterData.destroy({ where: {id: rosterEntryToDelete.id}});
+                                const dataEntry = await RosterData.create({
+                                    team_name: teamName,
+                                    player_one: p1,
+                                    player_two: p2,
+                                    player_three: p3,
+                                    player_four: p4,
+                                    player_five: p5,
+                                    player_six: p6,
+                                    aliases: rosterAliases
+                                });
+                               }
                             }
                             else if (err instanceof TypeError) {
                                 console.log(err);

@@ -52,15 +52,15 @@ module.exports = {
             }
             // Added info about the known aliases for the team
             let tAlias = rosterInfo.get('aliases');
-            tAlias = tAlias.split(',');
-            if (tAlias.length === 0) {
-                descString += "\nThere are no known aliases or alternate names for this team";
+            if (tAlias) {
+                descString += "\nAliases & Alternate Names\n";
+                tAlias = tAlias.split(',');
+                for (let i = 0; i < tAlias.length; i++) {
+                    descString += String(tAlias[i]) + "\n";
+                }
             }
             else {
-                descString += "\nAliases & Alternate Names\n"
-            }
-            for (let i = 0; i < tAlias.length; i++) {
-                descString += String(tAlias[i]) + "\n";
+                descString += "\nThere are no known aliases or alternate names for this team";
             }
             embed.setDescription(descString);
             await interaction.reply({ embeds: [embed] });
