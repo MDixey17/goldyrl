@@ -74,7 +74,59 @@ module.exports = {
         var mm = String(currentDay.getMonth() + 1).padStart(2, '0');
         var yyyy = String(currentDay.getFullYear());
 
-        currentDay = interaction.options.getString('date') ?? mm + '-' + dd + '-' + yyyy;
+        let dateInput = interaction.options.getString('date');
+        const badDateEmbed = new EmbedBuilder()
+            .setColor('#7A0019')
+            .setTitle('GoldyRL - Provided Date')
+            .setDescription('The provided date is incorrect. Please use the mm-dd-yyyy format!');
+
+        // Check if the date input is correctly formatted
+        if (dateInput) {
+            // We got an input, but is it correct
+            if (dateInput.includes('-')) {
+                let dateInfo = dateInput.split('-');
+                // Make sure the dates appear correct
+                if (dateInfo.length == 3) {
+                    let mm = dateInfo[0];
+                    let dd = dateInfo[1];
+                    let yyyy = dateInfo[2];
+                    // Make sure they are correct with how big they can be
+                    // 0 < mm < 13
+                    if (Number(mm) > 0 && Number(mm) < 13) {
+                        // 0 < dd < 32
+                        if (Number(dd) > 0 && Number(dd) < 32) {
+                            // yyyy >= 2022
+                            if (Number(yyyy) >= 2022) {
+                                // We have a good input
+                                currentDay = dateInput;
+                            }
+                            else {
+                                await interaction.reply({embeds: [badDateEmbed]});
+                                return;
+                            }
+                        }
+                        else {
+                            await interaction.reply({embeds: [badDateEmbed]});
+                            return;
+                        }
+                    } 
+                    else {
+                        await interaction.reply({embeds: [badDateEmbed]});
+                        return;
+                    }
+                } 
+                else {
+                    await interaction.reply({embeds: [badDateEmbed]});
+                    return;
+                }
+            }
+            else {
+                await interaction.reply({embeds: [badDateEmbed]});
+                return;
+            }
+        } else {
+            currentDay = mm + '-' + dd + '-' + yyyy;
+        }
 
         const dataEntry = await MatchData.create({
             team_one: teamOne,
