@@ -54,7 +54,7 @@ client.once('ready', async () => {
     console.log('Removing matches older than 45 days...');
     await MatchData.sync();
     const matchEntries = await MatchData.findAll({ attributes: ['date'] });
-    let matchesToDelete = []; // Contains the IDs according to the database
+    let matchesToDelete = []; // Contains the dates according to the database
     let today = new Date();
     // Format of date = mm-dd-yyyy
     // Split on the - character
@@ -67,13 +67,13 @@ client.once('ready', async () => {
         const diffTime = Math.abs(today - temp); // This is in milliseconds
         const numDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         if (numDays >= 45) {
-            matchesToDelete.push(e.id);
+            matchesToDelete.push(e.date);
         }
     });
 
     let deletedMatchesCount = 0;
     for (let i = 0; i < matchesToDelete.length; i++) {
-        deletedMatchesCount += (await MatchData.destroy({ where: { id: matchesToDelete[i]}}));
+        deletedMatchesCount += (await MatchData.destroy({ where: { date: matchesToDelete[i]}}));
     }
     console.log('Matches Deleted: ', deletedMatchesCount);
 
